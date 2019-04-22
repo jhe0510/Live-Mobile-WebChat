@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>전효은의 웹챗</title>
+        <meta name="viewport" content="width=divice-width, initial-scale=1">
+        <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+        <script src = "https://code.jquery.com/jquery-1.11.1.min.js"></script>
+        <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+        //html 문서 준비 완료시
+        $(document).ready(function () {
+            //변수를 선언
+            var socket = io.connect();
+            //이벤트 연결
+            socket.on('message', function (data) {
+                //추가할 문자열 생성
+                var output = '';
+                output += '<li>';
+                output += '     <h3>' + data.name + '</h3>';
+                output += '     <p>' + data.message + '</p>';
+                output += '     <p>' + data.date + '</p>';
+                output += '</li>';
+
+                //문서객체 추가
+                $(output).prependTo('#content');
+                $('#content').listview('refresh');
+            });
+
+            //버튼 클릭 시
+            $('button').click(function () {
+                socket.emit('message', {
+                    name : $('#name').val(),
+                    message : $('#message').val(),
+                    date : new Date().toUTCString()
+                });
+            });
+        });
+        </script>
+    </head>
+    <body>
+        <div data-role="page">
+            <div data-role="header">
+                <h1>전효은의 웹챗</h1>
+            </div>
+            <div data-role="content">
+                <h3>닉네임</h3>
+                <input id="name">
+                <a data-role="button" href="#chatpage">채팅 시작</a>
+            </div>
+        </div>
+        <div data-role="page" id="chatpage">
+            <div data-role="header">
+                <h1>전효은의 웹챗</h1>
+            </div>
+            <div data-role="content">
+                <input id="message">
+                <button>전송</button>
+                <ul id="content" data-role="listview" data-inset="ture">
+                    
+                </ul>
+            </div>
+        </div>
+
+    </body>
+</html>
